@@ -32,6 +32,7 @@ $(document).ready(function () {
   });
 });
 
+/* GLOBAL VARIABLES */
 let sameEmail = "";
 const emailsArray = [];
 
@@ -145,8 +146,8 @@ jQuery(document)
 
     sameEmail = $(email).val();
 
-    //EDIT FIELDS VALIDATION
-    $(this)
+    //EDIT FIELDS EMPTY VALIDATION
+    /*$(this)
       .closest("tr")
       .find("input[name='firstName']")
       .keyup(function () {
@@ -200,7 +201,7 @@ jQuery(document)
         } else if ($(inputs).val() !== 0) {
           $(saveBtn).removeAttr("disabled");
         }
-      });
+      });*/
 
     if (inputs.length > 0) {
       $(inputs).each(function () {
@@ -299,13 +300,13 @@ jQuery(document).on("click", ".add-employee", function () {
 });
 
 //RESET NEW ROW FIELDS
-jQuery(document).on("click", "table tbody tr .reset-new-row", function () {
+/*jQuery(document).on("click", "table tbody tr .reset-new-row", function () {
   let resetFields = $(this).closest("tr").find("input");
   resetSelect = $(this).closest("tr").find("select");
   $(resetFields).val("");
   $(resetSelect).val("");
   $('.new-input-row input:text[value=""]:first').focus();
-});
+});*/
 
 //ADD NEW EMPLOYEE
 function addEmployee() {
@@ -365,7 +366,7 @@ function addEmployee() {
     }
   }
 
-  if (uniqueEmailInput(inputEmails) == false) {
+  /*if (uniqueEmailInput(inputEmails) == false) {
     $(".notification").html(
       `<span class='alert alert-danger mt-3'>More than one employees cannot have the same email, please enter unique email for each employee</span>`
     );
@@ -390,33 +391,41 @@ function addEmployee() {
     $(".notification").html(
       "<span class='alert alert-danger mt-3'>Last Name should consist of only alphabets</span>"
     );
-  } else {
-    let successMsg = "";
-    $.ajax({
-      url: "PHP/Employee/Employee.php",
-      type: "POST",
-      data: JSON.stringify(allEmployeesDataArr),
-      success: function (response) {
-        $("#global-save").prop("disabled", true);
-        $(".cancel-new-row").hide();
-        if (response == 1) {
-          let numofEmployeesMsg = "";
-          //$(".notification").hide();
-          if (allEmployeesDataArr.length > 1) {
-            numofEmployeesMsg = "employees";
-          } else {
-            numofEmployeesMsg = "employee";
-          }
-          successMsg = `<span class='alert alert-dark mt-3'>New ${numofEmployeesMsg} added successfully!!</span>`;
+  } */
+  //else {
+  let successMsg = "";
+  $.ajax({
+    url: "PHP/Employee/Employee.php",
+    type: "POST",
+    data: JSON.stringify(allEmployeesDataArr),
+    //data: allEmployeesDataArr,
+    success: function (response) {
+      $("#global-save").prop("disabled", true);
+      $(".cancel-new-row").hide();
+      if (response == 1) {
+        let numofEmployeesMsg = "";
+
+        if (allEmployeesDataArr.length > 1) {
+          numofEmployeesMsg = "employees";
+        } else {
+          numofEmployeesMsg = "employee";
         }
+        successMsg = `<span class='alert alert-dark mt-3'>New ${numofEmployeesMsg} added successfully!!</span>`;
+
         $(".notification").html(successMsg);
-        showEmploeesData();
-      },
-      complete: function () {
-        $("#global-save").prop("disabled", true);
-      },
-    });
-  }
+      } else {
+        $(".notification").html(
+          "<div class='alert alert-primary'>" + response + "</div>"
+        );
+      }
+
+      showEmploeesData();
+    },
+    complete: function () {
+      $("#global-save").prop("disabled", true);
+    },
+  });
+  // }
 }
 
 //DELETE EMPLOYEE RECORD
@@ -427,7 +436,33 @@ $("#tbody").on("click", ".delete", function () {
 
   action = "delete";
 
-  let targetEmployeeData = { id: id, action: action };
+  //let targetEmployeeData = { id: id, action: action };
+  let firstName = $(this)
+    .closest("table tr")
+    .find("td input[name='firstName']")
+    .val();
+
+  let lastName = $(this)
+    .closest("table tr")
+    .find("td input[name='lastName']")
+    .val();
+
+  let email = $(this).closest("table tr").find("td input[name='email']").val();
+
+  let department = $(this)
+    .closest("table tr")
+    .find("td [name='department']")
+    .val();
+
+  let targetEmployeeData = {
+    id: id,
+    firstName: firstName,
+    lastName: lastName,
+    email: email,
+    department: department,
+    action: action,
+  };
+
   let deleteThis = this;
   let text = "Are you sure you want to delete this employee?";
   if (confirm(text) == true) {
@@ -437,7 +472,7 @@ $("#tbody").on("click", ".delete", function () {
       data: targetEmployeeData,
       success: function (data) {
         if (data == 1) {
-          $(deleteThis).closest("tr").fadeOut(500);
+          $(deleteThis).closest("tr").fadeOut(200);
           $(".notification").html(
             `<span class='alert alert-primary mt-3'>Employee deleted</span>`
           );
@@ -500,7 +535,7 @@ $("#tbody").on("click", ".save", function () {
     emailsArray.push(allemployeesData[i].email);
   }
 
-  validEmail = isValidEmail(email);
+  /*validEmail = isValidEmail(email);
   validFirstName = isValidName(firstName);
   validLastName = isValidName(lastName);
 
@@ -533,23 +568,28 @@ $("#tbody").on("click", ".save", function () {
     $(".notification").html(
       "<span class='alert alert-danger mt-3'>Last Name should consist of only alphabets</span>"
     );
-  } else {
-    $.ajax({
-      url: "PHP/Employee/Employee.php",
-      type: "POST",
-      data: employeeData,
-      success: function (response) {
-        if (response == 1) {
-          $(".notification").html(
-            `<span class='alert alert-primary mt-3'>Employee updated successfully</span>`
-          );
-        } else {
-          $(".notification").html(
-            `<span class='alert alert-primary mt-3'>Could not update record</span>`
-          );
-        }
-        showEmploeesData();
-      },
-    });
-  }
+  } 
+  */
+  //else {
+  $.ajax({
+    url: "PHP/Employee/Employee.php",
+    type: "POST",
+    data: employeeData,
+    success: function (response) {
+      if (response == 1) {
+        $(".notification").html(
+          `<span class='alert alert-primary mt-3'>Employee updated successfully</span>`
+        );
+      } else {
+        // $(".notification").html(
+        //   `<span class='alert alert-primary mt-3'>Could not update record</span>`
+        // );
+        $(".notification").html(
+          "<div class='alert alert-primary'>" + response + "</div>"
+        );
+      }
+      showEmploeesData();
+    },
+  });
+  //}
 });
